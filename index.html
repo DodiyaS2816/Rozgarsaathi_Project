@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RozgarSaathi - AI Career Guide (Prototype)</title>
+<style>
+:root{color-scheme:light;--bg:#FFFFFF;--panel:#FFFFFF;--bar:#FFFFFF;--me:#E7F6EC;--bot:#F3F4F6;--ink:#1B1F3B;--mut:#6B7280;--acc:#F28C28;--line:#E5E7EB;--chip:#FFFFFF;--note:#FFF4E0;--noteink:#7A4A00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Calibri,"Segoe UI",Roboto,Arial,sans-serif}
+.app{max-width:480px;height:100%;margin:0 auto;display:flex;flex-direction:column;background:var(--panel)}
+header{background:var(--bar);color:var(--ink);border-bottom:1px solid var(--line);padding:10px 14px;display:flex;align-items:center;gap:10px}
+.av{width:38px;height:38px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:20px}
+header b{font-size:17px;display:block}header small{color:var(--mut);font-size:12px}
+.note{background:var(--note);color:var(--noteink);font-size:11.5px;padding:6px 12px;line-height:1.35}
+#msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;padding:6px 0}
+.b{max-width:86%;padding:8px 11px;border-radius:10px;margin:5px 10px;font-size:14.5px;line-height:1.42;box-shadow:0 1px 1px rgba(0,0,0,.12)}
+.bot{background:var(--bot);align-self:flex-start}.me{background:var(--me);align-self:flex-end}.wide{max-width:95%}
+.mut{color:var(--mut)}.sm{font-size:12.5px;margin-top:3px;line-height:1.4}
+.role{border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:8px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin:5px 0}.bar i{display:block;height:100%;background:#1E9E8C;border-radius:3px}
+.res h3{margin:0 0 2px;font-size:17px}.res h4{margin:9px 0 2px;font-size:12px;text-transform:uppercase;color:var(--acc);letter-spacing:.04em}.res p{margin:0;font-size:13.5px}
+#tray{border-top:1px solid var(--line);padding:10px;display:flex;flex-wrap:wrap;gap:8px;max-height:40%;overflow-y:auto;background:var(--panel)}
+button,input{font:inherit}
+button{background:var(--chip);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:8px 13px;cursor:pointer;font-size:14px}
+button.on{background:var(--acc);border-color:var(--acc);color:#fff}button.go{background:#1E9E8C;border-color:#1E9E8C;color:#fff;font-weight:600}
+input{flex:1;min-width:0;padding:9px 12px;border-radius:18px;border:1px solid var(--line);background:var(--chip);color:var(--ink);font-size:14.5px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header><div class="av">💼</div><div><b>RozgarSaathi</b><small>AI career guide • online</small></div></header>
+  <div class="note">Prototype for the IBM SkillsBuild Final Project. Uses a small <b>sample dataset</b>, not live job listings. The full product would match against verified local jobs and chat in Hindi / regional languages.</div>
+  <div id="msgs"></div>
+  <div id="tray"></div>
+</div>
+<script>
+var D={
+"ITI Electrician":{skills:["Wiring","Motor repair","Safety standards","Basic PLC","Solar installation","Customer handling"],roles:[
+ {t:"Electrical Maintenance Technician",req:["Wiring","Motor repair","Safety standards","Basic PLC"]},
+ {t:"Solar Installation Technician",req:["Wiring","Solar installation","Safety standards","Customer handling"]},
+ {t:"Field Service Technician",req:["Wiring","Customer handling","Motor repair"]}]},
+"Diploma Mechanical":{skills:["AutoCAD","Machine operation","Quality inspection","Basic PLC","Preventive maintenance","MS Excel"],roles:[
+ {t:"Production Supervisor Trainee",req:["Machine operation","Quality inspection","MS Excel"]},
+ {t:"CAD Draftsman",req:["AutoCAD","MS Excel","Quality inspection"]},
+ {t:"Maintenance Engineer Trainee",req:["Preventive maintenance","Machine operation","Basic PLC"]}]},
+"BCom Graduate":{skills:["Tally","MS Excel","GST basics","Communication","Data entry","Customer handling"],roles:[
+ {t:"Accounts Assistant",req:["Tally","GST basics","MS Excel"]},
+ {t:"Back-Office Executive",req:["Data entry","MS Excel","Communication"]},
+ {t:"Customer Support Executive",req:["Communication","Customer handling","Data entry"]}]},
+"BCA Graduate":{skills:["HTML & CSS","Python basics","SQL","Communication","MS Excel","Git"],roles:[
+ {t:"Junior Web Developer",req:["HTML & CSS","Git","Python basics"]},
+ {t:"Junior Data Analyst",req:["SQL","MS Excel","Python basics"]},
+ {t:"IT Support Associate",req:["Communication","MS Excel","HTML & CSS"]}]}
+};
+var msgs=document.getElementById("msgs"),tray=document.getElementById("tray"),S={};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function add(cls,html){var d=document.createElement("div");d.className="b "+cls;d.innerHTML=html;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight}
+function bot(h){add("bot",h)}function me(t){add("me",esc(t))}
+function chips(opts,cb){tray.innerHTML="";opts.forEach(function(o){var b=document.createElement("button");b.textContent=o;b.onclick=function(){cb(o)};tray.appendChild(b)})}
+function start(){S={name:"",trade:"",skills:[],loc:""};msgs.innerHTML="";
+ bot("Hi! I'm <b>RozgarSaathi</b>, your free career guide. Tell me a little about yourself and I'll suggest job paths, skill gaps and free courses. What's your name?");
+ tray.innerHTML='<input id="ni" placeholder="Type your name" maxlength="40"><button class="go" id="go">Send</button>';
+ var ni=document.getElementById("ni");function send(){S.name=ni.value.trim()||"Friend";me(S.name);step2()}
+ document.getElementById("go").onclick=send;ni.onkeydown=function(e){if(e.key==="Enter")send()}}
+function step2(){bot("Nice to meet you, "+esc(S.name)+"! What did you study?");
+ chips(Object.keys(D),function(t){S.trade=t;me(t);step3()})}
+function step3(){bot("Which of these can you do? Tap all that apply, then press <b>Done</b>.");tray.innerHTML="";
+ D[S.trade].skills.forEach(function(k){var b=document.createElement("button");b.textContent=k;
+  b.onclick=function(){var i=S.skills.indexOf(k);if(i<0){S.skills.push(k);b.className="on"}else{S.skills.splice(i,1);b.className=""}};tray.appendChild(b)});
+ var g=document.createElement("button");g.className="go";g.textContent="Done";
+ g.onclick=function(){if(!S.skills.length){bot("Please pick at least one skill so I can match you.");return}me(S.skills.join(", "));step4()};tray.appendChild(g)}
+function step4(){bot("Where would you like to work?");chips(["In my city","Within my state","Anywhere in India"],function(l){S.loc=l;me(l);results()})}
+function results(){tray.innerHTML="";bot("Matching your profile with the sample job dataset…");
+ var ranked=D[S.trade].roles.map(function(r){var have=r.req.filter(function(x){return S.skills.indexOf(x)>-1});
+  var gap=r.req.filter(function(x){return S.skills.indexOf(x)<0});return{r:r,have:have,gap:gap,pct:Math.round(have.length/r.req.length*100)}}).sort(function(a,b){return b.pct-a.pct});
+ S.top=ranked[0];
+ setTimeout(function(){var h="<b>Your top 3 job paths</b>";
+  ranked.forEach(function(x,i){h+='<div class="role"><b>'+(i+1)+". "+x.r.t+'</b> <span class="mut">· '+x.pct+'% match</span><div class="bar"><i style="width:'+x.pct+'%"></i></div>'+
+   '<div class="sm">✅ You have: '+(x.have.join(", ")||"none yet")+"</div>"+
+   (x.gap.length?'<div class="sm">📚 Skill gap: '+x.gap.join(", ")+"<br>Free learning: a beginner course in "+x.gap[0]+" (e.g. IBM SkillsBuild or Skill India Digital)</div>":'<div class="sm">🎯 No skill gap. You are ready to apply.</div>')+"</div>"});
+  add("bot wide",h);
+  chips(["Build my resume","Start over"],function(o){me(o);if(o==="Start over")start();else resume()})},700)}
+function resume(){var t=S.top;
+ bot("Here is a simple one-page resume built from our chat:");
+ add("bot wide res","<h3>"+esc(S.name)+'</h3><p class="mut">Target role: '+t.r.t+" · Preferred location: "+S.loc+"</p>"+
+  "<h4>Education</h4><p>"+S.trade+"</p><h4>Skills</h4><p>"+S.skills.join(", ")+"</p>"+
+  "<h4>Skills to build next</h4><p>"+(t.gap.join(", ")||"None. Ready to apply.")+"</p>");
+ chips(["Start over"],function(){me("Start over");start()})}
+start();
+</script>
+</body>
+</html>
